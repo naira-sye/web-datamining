@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Kalkulator Berat Badan Ideal</title>
+<style>
+  /* Reset some styles */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .container {
+    background: #1e1e2f;
+    max-width: 350px;
+    width: 90vw;
+    padding: 1.8rem 2rem 2rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+  h1 {
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: #ffffffcc;
+  }
+  label {
+    display: block;
+    margin: 0.6rem 0 0.3rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #dddddddd;
+  }
+  input[type="number"], select {
+    width: 100%;
+    padding: 0.5rem 0.8rem;
+    border-radius: 10px;
+    border: none;
+    font-size: 1rem;
+    outline: none;
+    transition: background-color 0.3s ease;
+    box-shadow: inset 0 0 5px #000000aa;
+  }
+  input[type="number"]::placeholder {
+    color: #bbb;
+  }
+  select {
+    appearance: none;
+    background-color: #2a2a40;
+    color: #eee;
+  }
+  select option {
+    color: #222;
+  }
+  button {
+    margin-top: 1.5rem;
+    width: 100%;
+    background-color: #43e97b;
+    background-image: linear-gradient(315deg, #43e97b 0%, #38f9d7 74%);
+    border: none;
+    padding: 0.75rem 0;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    color: #0f2a26;
+    cursor: pointer;
+    box-shadow: 0 5px 14px #3bca6a;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  button:hover, button:focus {
+    background-color: #38f9d7;
+    outline: none;
+  }
+  .result {
+    margin-top: 1.6rem;
+    background-color: #2a2a40;
+    padding: 1rem 1.2rem;
+    border-radius: 14px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    color: #caffbf;
+    min-height: 48px;
+  }
+  @media (max-height: 600px) {
+    body {
+      align-items: flex-start;
+      padding-top: 10px;
+    }
+    .container {
+      max-width: 350px;
+      width: 95vw;
+      padding: 1.5rem 1rem 1.5rem;
+    }
+  }
+</style>
+</head>
+<body>
+  <main class="container" role="main" aria-label="Kalkulator Berat Badan Ideal">
+    <h1>Kalkulator Berat Badan Ideal</h1>
+    <form id="idealWeightForm" novalidate>
+      <label for="age">Usia (tahun):</label>
+      <input type="number" id="age" name="age" min="1" max="120" placeholder="Masukkan usia" required />
+
+      <label for="gender">Jenis Kelamin:</label>
+      <select id="gender" name="gender" required>
+        <option value="" disabled selected>Pilih jenis kelamin</option>
+        <option value="male">Laki-Laki</option>
+        <option value="female">Perempuan</option>
+      </select>
+
+      <label for="weight">Berat Badan (kg):</label>
+      <input type="number" id="weight" name="weight" min="1" max="300" step="0.1" placeholder="Masukkan berat badan" required />
+
+      <label for="height">Tinggi Badan (cm):</label>
+      <input type="number" id="height" name="height" min="50" max="250" step="0.1" placeholder="Masukkan tinggi badan" required />
+
+      <button type="submit">Hitung Berat Badan Ideal</button>
+    </form>
+    <div class="result" id="result" aria-live="polite" role="region"></div>
+  </main>
+<script>
+  function calculateIdealBodyWeight(gender, heightCm) {
+    // Convert height from cm to inches (1 inch = 2.54 cm)
+    const heightInches = heightCm / 2.54;
+
+    if (heightInches < 60) {
+      // For height below 5 feet, just return base weight
+      return gender === 'male' ? 50 : 45.5;
+    }
+
+    if (gender === 'male') {
+      // Devine formula for males
+      return 50 + 2.3 * (heightInches - 60);
+    } else if (gender === 'female') {
+      // Devine formula for females
+      return 45.5 + 2.3 * (heightInches - 60);
+    } else {
+      return NaN;
+    }
+  }
+
+  document.getElementById('idealWeightForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const ageInput = document.getElementById('age');
+    const genderInput = document.getElementById('gender');
+    const weightInput = document.getElementById('weight');
+    const heightInput = document.getElementById('height');
+    const resultDiv = document.getElementById('result');
+
+    // Validation
+    if (!ageInput.value || ageInput.value < 1 || ageInput.value > 120) {
+      resultDiv.textContent = 'Usia tidak valid. Masukkan usia antara 1-120 tahun.';
+      return;
+    }
+    if (!genderInput.value) {
+      resultDiv.textContent = 'Pilih jenis kelamin.';
+      return;
+    }
+    if (!weightInput.value || weightInput.value <= 0) {
+      resultDiv.textContent = 'Berat badan tidak valid.';
+      return;
+    }
+    if (!heightInput.value || heightInput.value <= 0) {
+      resultDiv.textContent = 'Tinggi badan tidak valid.';
+      return;
+    }
+
+    const idealWeight = calculateIdealBodyWeight(genderInput.value, parseFloat(heightInput.value));
+
+    if (isNaN(idealWeight)) {
+      resultDiv.textContent = 'Terjadi kesalahan dalam perhitungan.';
+      return;
+    }
+
+    const idealWeightRounded = idealWeight.toFixed(1);
+
+    // Provide feedback comparing current weight with ideal weight
+    let message = '';
+    const currentWeight = parseFloat(weightInput.value);
+    if (currentWeight < idealWeightRounded) {
+      message = `Berat badan ideal Anda sekitar ${idealWeightRounded} kg. Anda memiliki berat dibawah ideal.`;
+    } else if (currentWeight > idealWeightRounded) {
+      message = `Berat badan ideal Anda sekitar ${idealWeightRounded} kg. Anda memiliki berat di atas ideal.`;
+    } else {
+      message = `Berat badan ideal Anda sekitar ${idealWeightRounded} kg. Berat badan Anda sudah ideal!`;
+    }
+
+    resultDiv.textContent = message;
+  });
+</script>
+</body>
+</html>
